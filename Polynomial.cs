@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Promath2._0
 {
-    class Polynomial
+    class Monomial
     {
         // PRIVATE ATTRIBUTES
         private double _coefficient;
@@ -23,17 +23,17 @@ namespace Promath2._0
             get { return this._variables; }
         }
         // CONSTRUCTORS 
-        public Polynomial(double coefficient, Dictionary<string, double> variables)
+        public Monomial(double coefficient, Dictionary<string, double> variables)
         {
             this._coefficient = coefficient;
             this._variables = variables;
         }
-        public Polynomial(string expression)
+        public Monomial(string expression)
         {
             // anaylze a polynomial from a string 
             throw new NotImplementedException();
         }
-        public Polynomial(double coefficient) : this(coefficient, null)
+        public Monomial(double coefficient) : this(coefficient, null)
         {
 
         }
@@ -49,26 +49,26 @@ namespace Promath2._0
                                select pair;
             return firstSorted.SequenceEqual(secondSorted);
         }
-        public static Polynomial operator +(Polynomial p1, Polynomial p2)
+        public static Monomial operator +(Monomial p1, Monomial p2)
         {
             // override addition operator for two polynomial objects
             if (SameVariables(p1._variables, p2._variables))
             {
-                return new Polynomial(p1._coefficient + p2._coefficient, new Dictionary<string, double>(p1._variables));
+                return new Monomial(p1._coefficient + p2._coefficient, new Dictionary<string, double>(p1._variables));
             }
             throw new NotImplementedException();
         }
-        public static Polynomial operator -(Polynomial p1, Polynomial p2)
+        public static Monomial operator -(Monomial p1, Monomial p2)
         {
             // override subtraction operator for two polynomial objects
 
             if (SameVariables(p1._variables, p2._variables))
             {
-                return new Polynomial(p1._coefficient - p2._coefficient, new Dictionary<string, double>(p1._variables));
+                return new Monomial(p1._coefficient - p2._coefficient, new Dictionary<string, double>(p1._variables));
             }
             throw new NotImplementedException();
         }
-        public static Polynomial operator *(Polynomial p1, Polynomial p2)
+        public static Monomial operator *(Monomial p1, Monomial p2)
         {
             // override multiplication operator for two polynomial objects
 
@@ -102,20 +102,20 @@ namespace Promath2._0
                     }
                 }
             }
-            return new Polynomial(finalCoefficient, newVariables);
+            return new Monomial(finalCoefficient, newVariables);
         }
-        public static Polynomial operator *(Polynomial p1, double number)
+        public static Monomial operator *(Monomial p1, double number)
         {
             // override subtraction operator for a polynomial and a number
 
-            return new Polynomial(p1._coefficient * number, new Dictionary<string, double>(p1._variables));
+            return new Monomial(p1._coefficient * number, new Dictionary<string, double>(p1._variables));
         }
-        public static Polynomial operator *(double number, Polynomial p1)
+        public static Monomial operator *(double number, Monomial p1)
         {
             // override subtraction operator for a number and a polynomial
-            return new Polynomial(p1._coefficient * number, new Dictionary<string, double>(p1._variables));
+            return new Monomial(p1._coefficient * number, new Dictionary<string, double>(p1._variables));
         }
-        public static Polynomial operator ^(Polynomial p1, double number)
+        public static Monomial operator ^(Monomial p1, double number)
         {
             /*
             overrides the bitwise operation '^' as an exponent operator for a polynomial and number
@@ -125,29 +125,29 @@ namespace Promath2._0
             Dictionary<string, double> newDictionary = new Dictionary<string, double>();
             foreach (KeyValuePair<string, double> pair in p1._variables)
                 newDictionary.Add(pair.Key, pair.Value + number);
-            return new Polynomial(Math.Pow(p1._coefficient, number), newDictionary);
+            return new Monomial(Math.Pow(p1._coefficient, number), newDictionary);
         }
-        public static bool operator == (Polynomial p1, Polynomial p2)
+        public static bool operator == (Monomial p1, Monomial p2)
         {
             return p1._coefficient == p2._coefficient && SameVariables(p1._variables, p2._variables);
         }
-        public static bool operator != (Polynomial p1, Polynomial p2)
+        public static bool operator != (Monomial p1, Monomial p2)
         {
             return !(p1._coefficient == p2._coefficient) && !(SameVariables(p1._variables, p2._variables));
         }
-        public static bool operator == (Polynomial p1, double number) => p1._coefficient == number;
+        public static bool operator == (Monomial p1, double number) => p1._coefficient == number;
 
-        public static bool operator != (Polynomial p1, double number) => p1._coefficient != number;
+        public static bool operator != (Monomial p1, double number) => p1._coefficient != number;
 
-        public static bool operator ==(double number, Polynomial p) => p._coefficient == number;
+        public static bool operator ==(double number, Monomial p) => p._coefficient == number;
 
-        public static bool operator != (double number, Polynomial p) => p._coefficient != number;
+        public static bool operator != (double number, Monomial p) => p._coefficient != number;
 
-        public static Polynomial operator - (Polynomial p)
+        public static Monomial operator - (Monomial p)
         {
-            return new Polynomial(-p._coefficient, new Dictionary<string, double>(p._variables));
+            return new Monomial(-p._coefficient, new Dictionary<string, double>(p._variables));
         }
-        ~Polynomial()
+        ~Monomial()
         {
             Console.WriteLine("Destructed a polynomial expression");
         }
@@ -170,8 +170,18 @@ namespace Promath2._0
                 accumulator += $"{this._coefficient}";
             return accumulator + VariablesToString(this._variables);
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
-    class Var : Polynomial
+    class Var : Monomial
     {
         public Var(string variable)
             : base(coefficient: 1, variables: new Dictionary<string, double> { [variable] = 1 })
@@ -179,33 +189,33 @@ namespace Promath2._0
 
         }
     }
-    class Polynomials : IEnumerable<Polynomial>
+    class Polynomial : IEnumerable<Monomial>
     {
         // PRIVATE ATTRIBUTES
-        private List<Polynomial> _expressions;
+        private List<Monomial> _expressions;
 
         // PROPERTIES
 
-        public List<Polynomial> Expressions
+        public List<Monomial> Expressions
         {
             get { return this._expressions; }
         }
         public int NumOfExpressions => this._expressions.Count();
         // CONSTRUCTORS
-        public Polynomials(List<Polynomial> expressions) => this._expressions = expressions;
-        public Polynomials() => this._expressions = new List<Polynomial>();
-        public Polynomials(Polynomial p) => this._expressions = new List<Polynomial> { p };
+        public Polynomial(List<Monomial> expressions) => this._expressions = expressions;
+        public Polynomial() => this._expressions = new List<Monomial>();
+        public Polynomial(Monomial p) => this._expressions = new List<Monomial> { p };
 
-        public IEnumerator<Polynomial> GetEnumerator()
+        public IEnumerator<Monomial> GetEnumerator()
         {
-            return ((IEnumerable<Polynomial>)_expressions).GetEnumerator();
+            return ((IEnumerable<Monomial>)_expressions).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)_expressions).GetEnumerator();
         }
-        public Polynomial this[int index]
+        public Monomial this[int index]
         {
             get { return this._expressions[index]; }
             set { this._expressions[index] = value; }
